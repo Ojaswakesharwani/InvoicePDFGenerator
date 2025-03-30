@@ -6,10 +6,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -80,7 +82,8 @@ class MainActivity : AppCompatActivity() {
                 fos.close()
                 println("✅ PDF saved at: ${file.absolutePath}")
 
-                openPDF(file) // Open after saving
+                sendPdfViaWhatsApp(file)
+                //openPDF(file) // Open after saving
 
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -103,6 +106,24 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NO_HISTORY
         }
         startActivity(Intent.createChooser(intent, "Open PDF"))
+    }
+
+    private fun sendPdfViaWhatsApp(file: File) {
+        val uri = FileProvider.getUriForFile(this, "${applicationContext.packageName}.provider", file)
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TEXT, "Here is your invoice PDF.")
+            `package` = "com.whatsapp" // Ensures it opens in WhatsApp only
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "WhatsApp is not installed", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
