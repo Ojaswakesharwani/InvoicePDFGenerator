@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Generate pdf invoice
+     */
     private fun generateInvoicePDF(context: Context, view: View) {
         view.post {
             val pdfDocument = PdfDocument()
@@ -91,7 +94,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Helper function to convert a view to Bitmap
+    /**
+     *     Helper function to convert a view to Bitmap
+     */
     private fun getBitmapFromView(view: View): Bitmap {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -99,6 +104,10 @@ class MainActivity : AppCompatActivity() {
         return bitmap
     }
 
+
+    /**
+     * Open pdf
+     */
     private fun openPDF(file: File) {
         val uri = FileProvider.getUriForFile(this, "${applicationContext.packageName}.provider", file)
         val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -108,6 +117,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(intent, "Open PDF"))
     }
 
+    /**
+     * Send pdf to Wtsp
+     */
     private fun sendPdfViaWhatsApp(file: File) {
         val uri = FileProvider.getUriForFile(this, "${applicationContext.packageName}.provider", file)
 
@@ -125,5 +137,32 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "WhatsApp is not installed", Toast.LENGTH_SHORT).show()
         }
     }
+
+    /**
+     * Send pdf to particular Wtsp number
+     */
+    private fun sendPdfViaWhatsApp(file: File, phoneNumber: String) {
+        val uri = FileProvider.getUriForFile(this, "${applicationContext.packageName}.provider", file)
+
+        try {
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/pdf"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_TEXT, "Here is your invoice PDF.")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                `package` = "com.whatsapp"
+            }
+
+            // Create WhatsApp direct message URI
+            val whatsappIntent = Intent(Intent.ACTION_VIEW)
+            whatsappIntent.data = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber")
+
+            startActivity(whatsappIntent)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "WhatsApp is not installed or error occurred", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 }
