@@ -37,6 +37,14 @@ class MainActivity : AppCompatActivity() {
         val btnGenerate = findViewById<Button>(R.id.btn_generate)
 
         btnGenerate.setOnClickListener {
+
+            // Measure and layout manually
+            val widthSpec = View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY)
+            val heightSpec = View.MeasureSpec.makeMeasureSpec(2400, View.MeasureSpec.AT_MOST)
+            invoiceLayout.measure(widthSpec, heightSpec)
+            invoiceLayout.layout(0, 0, invoiceLayout.measuredWidth, invoiceLayout.measuredHeight)
+
+
             generateInvoicePDF(this, invoiceLayout)
         }
 
