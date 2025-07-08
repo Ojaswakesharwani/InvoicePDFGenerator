@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        invoiceLayout = findViewById(R.id.invoice_view) // Get the root layout of the invoice
+        invoiceLayout = findViewById(R.id.invoice2) // Get the root layout of the invoice
         val btnGenerate = findViewById<Button>(R.id.btn_generate)
 
         btnGenerate.setOnClickListener {
